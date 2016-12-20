@@ -119,60 +119,13 @@ class RPReporter extends Reporter {
       reporterService.get().finishTestMethod(e)
     }
 
-    /*
-
-        case e: RunStarting ⇒ {
-          println(e.getClass.getSimpleName)
-          println(e.toString)
-        }
-        case e: RunCompleted ⇒ {
-          println(e.getClass.getSimpleName)
-          println(e.toString)
-        }
-        case e: SuiteCompleted ⇒ {
-          println(e.getClass.getSimpleName)
-          println(e.toString)
-        }
-        case e: SuiteStarting ⇒ {
-          println(e.getClass.getSimpleName)
-          val klass = Class.forName(e.suiteClassName.get)
-          // we don't report nested suites
-          if(!Class.forName("org.scalatest.Suites").isAssignableFrom(klass)){
-            ReporterService().startTestSuite(e)
-          }
-          println("-" * 50 + Class.forName("org.scalatest.Suites").isAssignableFrom(klass))
-          println(e.suiteId)
-          println(e.toString)
-        }
-        case e: TestStarting ⇒ {
-          println(e.getClass.getSimpleName)
-          println(e.toString)
-        }
-        case e: TestCanceled ⇒ {
-          println(e.getClass.getSimpleName)
-          println(e.toString)
-        }
-        case e: TestFailed ⇒ {
-          println(e.getClass.getSimpleName)
-          println(e.toString)
-        }
-        case e: TestIgnored ⇒ {
-          println(e.getClass.getSimpleName)
-          println(e.toString)
-        }
-        case e: TestPending ⇒ {
-          println(e.getClass.getSimpleName)
-        }
-        case e: TestSucceeded ⇒ {
-          println(e.getClass.getSimpleName)
-          println(e.toString)
-        }
-    */
+    case e: InfoProvided ⇒ {
+      println(e.getClass.getSimpleName)
+    }
 
     case e: DiscoveryStarting ⇒ println(e.getClass.getSimpleName)
     case e: AlertProvided ⇒ println(e.getClass.getSimpleName)
     case e: DiscoveryCompleted ⇒ println(e.getClass.getSimpleName)
-    case e: InfoProvided ⇒ println(e.getClass.getSimpleName)
     case e: MarkupProvided ⇒ println(e.getClass.getSimpleName)
     case e: NoteProvided ⇒ println(e.getClass.getSimpleName)
     case e: RunAborted ⇒ println(e.getClass.getSimpleName)
@@ -180,7 +133,6 @@ class RPReporter extends Reporter {
     case e: ScopeClosed ⇒ println(e.getClass.getSimpleName)
     case e: ScopeOpened ⇒ println(e.getClass.getSimpleName)
     case e: ScopePending ⇒ println(e.getClass.getSimpleName)
-
 
   }
 }
