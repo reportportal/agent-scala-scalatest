@@ -1,3 +1,24 @@
+/*
+ * Copyright 2016 EPAM Systems
+ *
+ *
+ * This file is part of EPAM Report Portal.
+ * https://github.com/reportportal/agent-scala-scalatest
+ *
+ * Report Portal is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * Report Portal is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with Report Portal.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
 package com.epam.reportportal.scalatest
 
 import java.io.InputStream
@@ -123,16 +144,16 @@ class RPReporter extends Reporter {
       println(e.getClass.getSimpleName)
     }
 
-    case e: DiscoveryStarting ⇒ println(e.getClass.getSimpleName)
-    case e: AlertProvided ⇒ println(e.getClass.getSimpleName)
-    case e: DiscoveryCompleted ⇒ println(e.getClass.getSimpleName)
-    case e: MarkupProvided ⇒ println(e.getClass.getSimpleName)
-    case e: NoteProvided ⇒ println(e.getClass.getSimpleName)
-    case e: RunAborted ⇒ println(e.getClass.getSimpleName)
-    case e: RunStopped ⇒ println(e.getClass.getSimpleName)
-    case e: ScopeClosed ⇒ println(e.getClass.getSimpleName)
-    case e: ScopeOpened ⇒ println(e.getClass.getSimpleName)
-    case e: ScopePending ⇒ println(e.getClass.getSimpleName)
+    case e: DiscoveryStarting ⇒ logger.info(e.getClass.getSimpleName)
+    case e: AlertProvided ⇒ logger.info(e.getClass.getSimpleName)
+    case e: DiscoveryCompleted ⇒ logger.info(e.getClass.getSimpleName)
+    case e: MarkupProvided ⇒ logger.info(e.getClass.getSimpleName)
+    case e: NoteProvided ⇒ logger.info(e.getClass.getSimpleName)
+    case e: RunAborted ⇒ logger.info(e.getClass.getSimpleName)
+    case e: RunStopped ⇒ logger.info(e.getClass.getSimpleName)
+    case e: ScopeClosed ⇒ logger.info(e.getClass.getSimpleName)
+    case e: ScopeOpened ⇒ logger.info(e.getClass.getSimpleName)
+    case e: ScopePending ⇒ logger.info(e.getClass.getSimpleName)
 
   }
 }
