@@ -6,7 +6,7 @@ scalaVersion := "2.11.8"
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
-licenses += "GPLv2" -> url("https://www.gnu.org/licenses/gpl-2.0.html")
+licenses += "GPL-3.0" -> url("https://www.gnu.org/licenses/gpl-3.0.html")
 
 resolvers ++= Seq(
   "EPAM bintray" at "http://dl.bintray.com/epam/reportportal"
