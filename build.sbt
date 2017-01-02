@@ -18,3 +18,6 @@ libraryDependencies ++= Seq(
 testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest)
 
 parallelExecution in Test := false
+
+resolvers += Resolver.jcenterRepo
+
