@@ -27,4 +27,6 @@ parallelExecution in Test := false
 
 resolvers += Resolver.jcenterRepo
 
-//bintrayOrganization := Some("epam")
+bintrayOrganization := Some("epam")
+
+bintrayRepository := "reportportal"
