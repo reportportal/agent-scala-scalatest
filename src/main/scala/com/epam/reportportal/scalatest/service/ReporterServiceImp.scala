@@ -56,7 +56,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
 
   def startLaunch(event: RunStarting): Unit = {
     val rq = new StartLaunchRQ {
-      setName(parameters.getProjectName)
+      setName(parameters.getLaunchName)
       setStartTime(Calendar.getInstance.getTime)
       setTags(parameters.getTags)
       setMode(parameters.getMode)
