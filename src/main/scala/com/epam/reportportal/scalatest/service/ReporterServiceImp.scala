@@ -27,45 +27,43 @@ import com.epam.reportportal.listeners.{ListenerParameters, Statuses}
 import com.epam.reportportal.scalatest.domain.TestContext
 import com.epam.reportportal.service.{Launch, ReportPortal}
 import com.epam.ta.reportportal.ws.model.issue.Issue
-import com.epam.ta.reportportal.ws.model.launch.{Mode, StartLaunchRQ}
+import com.epam.ta.reportportal.ws.model.launch.Mode
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ
 import com.epam.ta.reportportal.ws.model.{FinishExecutionRQ, FinishTestItemRQ, StartTestItemRQ}
 import com.google.inject.Inject
 import io.reactivex.Maybe
 import org.scalatest.events._
 import org.slf4j.{Logger, LoggerFactory}
-import rp.com.google.common.base.Supplier
 
 /*
  * Implements communication with the ReportPortal.
  */
-class ReporterServiceImp @Inject()(parameters: ListenerParameters, testContext: TestContext) extends ReporterService {
+class ReporterServiceImp @Inject()(parameters: ListenerParameters, launch: Launch, testContext: TestContext) extends ReporterService {
 
   private val logger = LoggerFactory.getLogger(classOf[ReporterServiceImp])
 
   private var launchRunningMode: Mode = _
   private var description: String = _
   private var isSkippedAnIssue: Boolean = _
-  private var launch: Launch = _
 
   init()
 
   def init(): Unit = {
-    this.launch = new Supplier[Launch]() {
-      override def get: Launch = { //this reads property, so we want to
-        //init ReportPortal object each time Launch object is going to be created
-        val reportPortal = ReportPortal.builder.build
-        val rq = new StartLaunchRQ {
-          setName(parameters.getLaunchName)
-          setStartTime(Calendar.getInstance.getTime)
-          setAttributes(parameters.getAttributes)
-          setMode(parameters.getLaunchRunningMode)
-        }
-        rq.setStartTime(Calendar.getInstance.getTime)
-        if (description != null) rq.setDescription(description)
-        reportPortal.newLaunch(rq)
-      }
-    }.get
+//    this.launch = new Supplier[Launch]() {
+//      override def get: Launch = { //this reads property, so we want to
+//        //init ReportPortal object each time Launch object is going to be created
+//        val reportPortal = ReportPortal.builder.build
+//        val rq = new StartLaunchRQ {
+//          setName(parameters.getLaunchName)
+//          setStartTime(Calendar.getInstance.getTime)
+//          setAttributes(parameters.getAttributes)
+//          setMode(parameters.getLaunchRunningMode)
+//        }
+//        rq.setStartTime(Calendar.getInstance.getTime)
+//        if (description != null) rq.setDescription(description)
+//        reportPortal.newLaunch(rq)
+//      }
+//    }.get
     description = parameters.getDescription
     launchRunningMode = parameters.getLaunchRunningMode
     isSkippedAnIssue = parameters.getSkippedAnIssue
