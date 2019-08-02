@@ -20,9 +20,9 @@
 
 package com.epam.reportportal.scalatest.service
 
-import com.epam.reportportal.guice.Injector
 import com.epam.reportportal.scalatest.providers.TestContextProvider
 import com.google.common.base.{Supplier, Suppliers}
+import com.google.inject.Guice
 import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 
 
@@ -32,7 +32,7 @@ class ReporterServiceTest extends FunSuite with Matchers with BeforeAndAfter{
 
   before {
     reporterService = Suppliers.memoize(new Supplier[ReporterServiceImp] {
-      override def get() = Injector.getInstance.getChildInjector(new TestContextProvider).getBean(classOf[ReporterServiceImp])
+      override def get() = Guice.createInjector(new TestContextProvider).getInstance(classOf[ReporterServiceImp])
     })
   }
 

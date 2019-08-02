@@ -28,11 +28,10 @@ import org.scalatest.Reporter
 import org.scalatest.events._
 import com.google.common.base.Supplier
 import com.google.common.base.Suppliers
-import com.epam.reportportal.guice.Injector
 import com.epam.reportportal.scalatest.providers.TestContextProvider
 import com.epam.reportportal.scalatest.service.ReporterServiceImp
+import com.google.inject.Guice
 import org.slf4j.LoggerFactory
-import rp.com.google.common.base.{Supplier, Suppliers}
 
 /**
   * Own Reporter implementation to send test information to ReportPortal server.
@@ -51,7 +50,7 @@ class RPReporter extends Reporter {
     isSuiteStarted = new ThreadLocal[Boolean]
     isSuiteStarted.set(false)
     reporterService = Suppliers.memoize(new Supplier[ReporterServiceImp] {
-      override def get() = Injector.getInstance.getChildInjector(new TestContextProvider).getBean(classOf[ReporterServiceImp])
+      override def get() = Guice.createInjector(new TestContextProvider).getInstance(classOf[ReporterServiceImp])
     })
   }
 
