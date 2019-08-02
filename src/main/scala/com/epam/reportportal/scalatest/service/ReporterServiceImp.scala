@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 import com.epam.reportportal.listeners.{ListenerParameters, Statuses}
 import com.epam.reportportal.scalatest.domain.TestContext
-import com.epam.reportportal.service.{Launch, LaunchImpl, ReportPortal}
+import com.epam.reportportal.service.{Launch, ReportPortal}
 import com.epam.ta.reportportal.ws.model.issue.Issue
 import com.epam.ta.reportportal.ws.model.launch.{Mode, StartLaunchRQ}
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ
@@ -39,7 +39,7 @@ import rp.com.google.common.base.Supplier
 /*
  * Implements communication with the ReportPortal.
  */
-class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: LaunchImpl, testContext: TestContext) extends ReporterService {
+class ReporterServiceImp @Inject()(parameters: ListenerParameters, testContext: TestContext) extends ReporterService {
 
   private val logger = LoggerFactory.getLogger(classOf[ReporterServiceImp])
 
@@ -94,7 +94,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
     }
     rq.setStatus(status)
     try
-      service.finish(rq)
+      launch.finish(rq)
     catch {
       case e: Exception => {
         handleException(e, logger, "Unable finish the launch: '" + testContext.launchID + "'")
@@ -109,7 +109,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
       setType("SUITE")
     }
     try {
-      val rs = service.startTestItem(rq)
+      val rs = launch.startTestItem(rq)
       testContext.rootIdsOfSuites.put(event.suiteId, rs)
       testContext.suitPassed.put(event.suiteId, true)
     }
@@ -129,7 +129,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
       case Some(id) => {
         Some(rq.setStatus(status))
         try {
-          service.finishTestItem(id, rq)
+          launch.finishTestItem(id, rq)
         } catch {
           case ex: Exception => handleException(ex, logger, "Unable finish test suite: '" + e.suiteId + "'")
         }
@@ -148,7 +148,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
       setType("TEST")
     }
     try {
-      val rs = (service.startTestItem(rq))
+      val rs = (launch.startTestItem(rq))
       testContext.rootIdsOfSuites.put(event.suiteId, rs)
       testContext.suitPassed.put(event.suiteId, true)
     }
@@ -165,7 +165,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
     getValueOfMap(testContext.rootIdsOfSuites, event.suiteId) match {
       case Some(value) => {
         try
-          service.finishTestItem(value, rq)
+          launch.finishTestItem(value, rq)
         catch {
           case e: Exception => {
             handleException(e, logger, "Unable finish test: '" + value + "'")
@@ -203,7 +203,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
     getValueOfMap(testContext.rootIdsOfSuites, event.suiteId) match {
       case Some(value) => {
         try
-          service.finishTestItem(value, rq)
+          launch.finishTestItem(value, rq)
         catch {
           case e: Exception => {
             handleException(e, logger, "Unable finish test: '" + value + "'")
@@ -225,7 +225,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
     try
       getValueOfMap(testContext.rootIdsOfSuites, event.suiteId) match {
         case Some(rsId) => {
-          rs = service.startTestItem(rsId, rq)
+          rs = launch.startTestItem(rsId, rq)
           testContext.rootIdsOfSuites.put(event.testName, rs)
         }
         case None => handleException(new RuntimeException(s"Unable start test method: ${event.testText}"),
@@ -249,7 +249,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
     try
       getValueOfMap(testContext.rootIdsOfSuites, event.suiteId) match {
         case Some(rsId) => {
-          rs = service.startTestItem(rsId, rq)
+          rs = launch.startTestItem(rsId, rq)
           testContext.rootIdsOfSuites.put(event.testName, rs)
         }
         case None => handleException(new RuntimeException(s"Unable start test method: ${event.testText}"),
@@ -273,7 +273,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
     try
       getValueOfMap(testContext.rootIdsOfSuites, event.suiteId) match {
         case Some(rsId) => {
-          rs = service.startTestItem(rsId, rq)
+          rs = launch.startTestItem(rsId, rq)
           testContext.rootIdsOfSuites.put(event.testName, rs)
         }
         case None => handleException(new RuntimeException(s"Unable start test method: ${event.testText}"),
@@ -319,7 +319,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Laun
     getValueOfMap(testContext.rootIdsOfSuites, testId) match {
       case Some(value) => {
         try {
-          service.finishTestItem(value, rq)
+          launch.finishTestItem(value, rq)
         }
         catch {
           case e: Exception => {

@@ -25,14 +25,13 @@ import java.lang.reflect.{InvocationHandler, Method, Proxy}
 import com.epam.reportportal.listeners.ListenerParameters
 import com.epam.reportportal.scalatest.domain.TestContext
 import com.epam.reportportal.scalatest.service.{ReporterService, ReporterServiceImp}
-import com.epam.reportportal.service.LaunchImpl
 import com.google.inject.{Inject, Provider, Provides}
 
-class ReporterServiceProvider @Inject()(listenerParameters: ListenerParameters, testContext: TestContext, reportPortalService: LaunchImpl) extends Provider[ReporterService] {
+class ReporterServiceProvider @Inject()(listenerParameters: ListenerParameters, testContext: TestContext) extends Provider[ReporterService] {
 
   @Provides
   override def get(): ReporterService = {
-    if (listenerParameters.getEnable) return new ReporterServiceImp(listenerParameters, reportPortalService, testContext)
+    if (listenerParameters.getEnable) return new ReporterServiceImp(listenerParameters, testContext)
 
     return Proxy.newProxyInstance(this.getClass.getClassLoader,
       Array[Class[_]](classOf[ReporterService]),
