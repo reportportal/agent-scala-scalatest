@@ -25,7 +25,7 @@ import java.util.concurrent.ConcurrentHashMap
 
 import com.epam.reportportal.listeners.{ListenerParameters, Statuses}
 import com.epam.reportportal.scalatest.domain.TestContext
-import com.epam.reportportal.service.{Launch, ReportPortal}
+import com.epam.reportportal.service.{Launch, LaunchImpl, ReportPortal}
 import com.epam.ta.reportportal.ws.model.issue.Issue
 import com.epam.ta.reportportal.ws.model.launch.Mode
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ
@@ -38,7 +38,7 @@ import org.slf4j.{Logger, LoggerFactory}
 /*
  * Implements communication with the ReportPortal.
  */
-class ReporterServiceImp @Inject()(parameters: ListenerParameters, launch: Launch, testContext: TestContext) extends ReporterService {
+class ReporterServiceImp @Inject()(parameters: ListenerParameters, launch: LaunchImpl, testContext: TestContext) extends ReporterService {
 
   private val logger = LoggerFactory.getLogger(classOf[ReporterServiceImp])
 
