@@ -50,16 +50,16 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
 
   def init(): Unit = {
     description = parameters.getDescription
-    launchRunningMode = parameters.getMode
-    isSkippedAnIssue = parameters.getIsSkippedAnIssue
+    launchRunningMode = parameters.getLaunchRunningMode
+    isSkippedAnIssue = parameters.getSkippedAnIssue
   }
 
   def startLaunch(event: RunStarting): Unit = {
     val rq = new StartLaunchRQ {
       setName(parameters.getLaunchName)
       setStartTime(Calendar.getInstance.getTime)
-      setTags(parameters.getTags)
-      setMode(parameters.getMode)
+      setAttributes(parameters.getAttributes)
+      setMode(parameters.getLaunchRunningMode)
     }
     if (description != null) rq.setDescription(description)
 

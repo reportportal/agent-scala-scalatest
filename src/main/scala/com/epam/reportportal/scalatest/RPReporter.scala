@@ -32,6 +32,7 @@ import com.epam.reportportal.guice.Injector
 import com.epam.reportportal.scalatest.providers.TestContextProvider
 import com.epam.reportportal.scalatest.service.ReporterServiceImp
 import org.slf4j.LoggerFactory
+import rp.com.google.common.base.{Supplier, Suppliers}
 
 /**
   * Own Reporter implementation to send test information to ReportPortal server.

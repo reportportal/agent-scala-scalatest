@@ -14,9 +14,11 @@ resolvers ++= Seq(
   "EPAM bintray" at "http://dl.bintray.com/epam/reportportal"
 )
 
-libraryDependencies ++= Seq(
+libraryDependencies ++= Seq("com.google.inject" % "guice" % "3.0",
   "org.scalatest" %% "scalatest" % "3.0.1",
-  "com.epam.reportportal" % "client-java-core" % "2.6.0"
+  "com.epam.reportportal" % "client-java" % "5.0.0-BETA-1",
+  "com.epam.reportportal" % "commons-model" % "5.0.0-BETA-8",
+  "com.google.guava" % "guava" % "18.0"
 )
 
 releaseCrossBuild := true
