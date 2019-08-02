@@ -21,12 +21,13 @@
 package com.epam.reportportal.scalatest.providers
 
 import java.util.concurrent.ConcurrentHashMap
-import javax.inject.Singleton
 
+import javax.inject.Singleton
 import com.epam.reportportal.listeners.ListenerParameters
 import com.epam.reportportal.scalatest.domain.TestContext
 import com.epam.reportportal.scalatest.service.ReporterService
 import com.google.inject.{AbstractModule, Provides}
+import io.reactivex.Maybe
 
 class TestContextProvider extends AbstractModule {
 
@@ -38,8 +39,8 @@ class TestContextProvider extends AbstractModule {
   @Singleton def provideTestContext(parameters: ListenerParameters): TestContext = {
     val testNGContext: TestContext = new TestContext(
       parameters.getLaunchName,
-      "", false, new ConcurrentHashMap[String, Boolean],
-      new ConcurrentHashMap[String, String] )
+      Maybe.empty(), false, new ConcurrentHashMap[String, Boolean],
+      new ConcurrentHashMap[String, Maybe[String]] )
     testNGContext
   }
 }

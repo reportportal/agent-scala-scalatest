@@ -23,50 +23,60 @@ package com.epam.reportportal.scalatest.service
 import java.util.Calendar
 import java.util.concurrent.ConcurrentHashMap
 
-import com.epam.reportportal.listeners.ListenersUtils.handleException
 import com.epam.reportportal.listeners.{ListenerParameters, Statuses}
 import com.epam.reportportal.scalatest.domain.TestContext
-import com.epam.reportportal.service.BatchedReportPortalService
+import com.epam.reportportal.service.{Launch, LaunchImpl, ReportPortal}
 import com.epam.ta.reportportal.ws.model.issue.Issue
 import com.epam.ta.reportportal.ws.model.launch.{Mode, StartLaunchRQ}
 import com.epam.ta.reportportal.ws.model.log.SaveLogRQ
-import com.epam.ta.reportportal.ws.model.{EntryCreatedRS, FinishExecutionRQ, FinishTestItemRQ, StartTestItemRQ}
+import com.epam.ta.reportportal.ws.model.{FinishExecutionRQ, FinishTestItemRQ, StartTestItemRQ}
 import com.google.inject.Inject
+import io.reactivex.Maybe
 import org.scalatest.events._
-import org.slf4j.LoggerFactory
+import org.slf4j.{Logger, LoggerFactory}
+import rp.com.google.common.base.Supplier
 
 /*
  * Implements communication with the ReportPortal.
  */
-class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: BatchedReportPortalService, testContext: TestContext) extends ReporterService {
+class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: LaunchImpl, testContext: TestContext) extends ReporterService {
 
   private val logger = LoggerFactory.getLogger(classOf[ReporterServiceImp])
 
   private var launchRunningMode: Mode = _
   private var description: String = _
   private var isSkippedAnIssue: Boolean = _
+  private var launch: Launch = _
 
   init()
 
   def init(): Unit = {
+    this.launch = new Supplier[Launch]() {
+      override def get: Launch = { //this reads property, so we want to
+        //init ReportPortal object each time Launch object is going to be created
+        val reportPortal = ReportPortal.builder.build
+        val rq = new StartLaunchRQ {
+          setName(parameters.getLaunchName)
+          setStartTime(Calendar.getInstance.getTime)
+          setAttributes(parameters.getAttributes)
+          setMode(parameters.getLaunchRunningMode)
+        }
+        rq.setStartTime(Calendar.getInstance.getTime)
+        if (description != null) rq.setDescription(description)
+        reportPortal.newLaunch(rq)
+      }
+    }.get
     description = parameters.getDescription
     launchRunningMode = parameters.getLaunchRunningMode
     isSkippedAnIssue = parameters.getSkippedAnIssue
   }
 
   def startLaunch(event: RunStarting): Unit = {
-    val rq = new StartLaunchRQ {
-      setName(parameters.getLaunchName)
-      setStartTime(Calendar.getInstance.getTime)
-      setAttributes(parameters.getAttributes)
-      setMode(parameters.getLaunchRunningMode)
-    }
-    if (description != null) rq.setDescription(description)
 
     try {
       //var rs: EntryCreatedRS = null
-      val rs = service.startLaunch(rq)
-      testContext.launchID = rs.getId
+      val rs = launch.start()
+      testContext.launchID = rs;
     }
     catch {
       case e: Exception => {
@@ -84,7 +94,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
     }
     rq.setStatus(status)
     try
-      service.finishLaunch(testContext.launchID, rq)
+      service.finish(rq)
     catch {
       case e: Exception => {
         handleException(e, logger, "Unable finish the launch: '" + testContext.launchID + "'")
@@ -94,14 +104,13 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
 
   def startTestSuite(event: SuiteStarting): Unit = {
     val rq: StartTestItemRQ = new StartTestItemRQ {
-      setLaunchId(testContext.launchID)
       setName(event.suiteName)
       setStartTime(Calendar.getInstance.getTime)
       setType("SUITE")
     }
     try {
-      val rs = service.startRootTestItem(rq)
-      testContext.rootIdsOfSuites.put(event.suiteId, rs.getId)
+      val rs = service.startTestItem(rq)
+      testContext.rootIdsOfSuites.put(event.suiteId, rs)
       testContext.suitPassed.put(event.suiteId, true)
     }
     catch {
@@ -118,7 +127,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
     rq.setStatus(status)
     getValueOfMap(testContext.rootIdsOfSuites, e.suiteId) match {
       case Some(id) => {
-        Some(rq.setStatus(id))
+        Some(rq.setStatus(status))
         try {
           service.finishTestItem(id, rq)
         } catch {
@@ -134,14 +143,13 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
   def startTestClass(event: SuiteStarting): Unit = {
     val rq = new StartTestItemRQ {
       setName(event.suiteName)
-      setLaunchId(testContext.launchID)
       setDescription(event.suiteId)
       setStartTime(Calendar.getInstance.getTime)
       setType("TEST")
     }
     try {
-      val rs = (service.startRootTestItem(rq))
-      testContext.rootIdsOfSuites.put(event.suiteId, rs.getId)
+      val rs = (service.startTestItem(rq))
+      testContext.rootIdsOfSuites.put(event.suiteId, rs)
       testContext.suitPassed.put(event.suiteId, true)
     }
     catch {
@@ -166,6 +174,11 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
       }
       case None => handleException(new RuntimeException("Missing testId."), logger, "Unable finish test: '" + event.suiteId + "'")
     }
+  }
+
+  def handleException(exception: Exception, logger: Logger, str: String): Unit = {
+    exception.printStackTrace();
+    logger.error(str);
   }
 
   def finishTestClass(event: SuiteAborted): Unit = {
@@ -204,17 +217,16 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
   def startTestMethod(event: TestStarting) {
     val rq = new StartTestItemRQ() {
       setName(event.testName)
-      setLaunchId(testContext.launchID)
       setDescription(createStepDescription(event))
       setStartTime(Calendar.getInstance.getTime)
       setType("STEP")
     }
-    var rs: EntryCreatedRS = null
+    var rs: Maybe[String] = null
     try
       getValueOfMap(testContext.rootIdsOfSuites, event.suiteId) match {
         case Some(rsId) => {
           rs = service.startTestItem(rsId, rq)
-          testContext.rootIdsOfSuites.put(event.testName, rs.getId)
+          testContext.rootIdsOfSuites.put(event.testName, rs)
         }
         case None => handleException(new RuntimeException(s"Unable start test method: ${event.testText}"),
           logger, new StringBuilder("Unable start test method: '").append(event.testText).append("'").toString)
@@ -229,17 +241,16 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
   def startTestMethod(event: TestIgnored) {
     val rq = new StartTestItemRQ() {
       setName(event.testName)
-      setLaunchId(testContext.launchID)
       setDescription(createStepDescription(event))
       setStartTime(Calendar.getInstance.getTime)
       setType("STEP")
     }
-    var rs: EntryCreatedRS = null
+    var rs: Maybe[String] = null
     try
       getValueOfMap(testContext.rootIdsOfSuites, event.suiteId) match {
         case Some(rsId) => {
           rs = service.startTestItem(rsId, rq)
-          testContext.rootIdsOfSuites.put(event.testName, rs.getId)
+          testContext.rootIdsOfSuites.put(event.testName, rs)
         }
         case None => handleException(new RuntimeException(s"Unable start test method: ${event.testText}"),
           logger, new StringBuilder("Unable start test method: '").append(event.testText).append("'").toString)
@@ -254,17 +265,16 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
   def startTestMethod(event: TestPending) {
     val rq = new StartTestItemRQ() {
       setName(event.testName)
-      setLaunchId(testContext.launchID)
       setDescription(createStepDescription(event))
       setStartTime(Calendar.getInstance.getTime)
       setType("STEP")
     }
-    var rs: EntryCreatedRS = null
+    var rs: Maybe[String] = null
     try
       getValueOfMap(testContext.rootIdsOfSuites, event.suiteId) match {
         case Some(rsId) => {
           rs = service.startTestItem(rsId, rq)
-          testContext.rootIdsOfSuites.put(event.testName, rs.getId)
+          testContext.rootIdsOfSuites.put(event.testName, rs)
         }
         case None => handleException(new RuntimeException(s"Unable start test method: ${event.testText}"),
           logger, new StringBuilder("Unable start test method: '").append(event.testText).append("'").toString)
@@ -326,14 +336,22 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
   }
 
   def sendReportPortalMsg(e: TestFailed): Unit = {
-    val saveLogRequest = new SaveLogRQ
-    saveLogRequest.setTestItemId(testContext.rootIdsOfSuites.get(e.testName))
-    saveLogRequest.setLevel("ERROR")
-    saveLogRequest.setLogTime(Calendar.getInstance.getTime)
-    saveLogRequest.setMessage(e.message)
-    saveLogRequest.setLogTime(Calendar.getInstance.getTime)
+
     try {
-      service.log(saveLogRequest)
+
+      val value: rp.com.google.common.base.Function[String, SaveLogRQ] = new rp.com.google.common.base.Function[String, SaveLogRQ] {
+        override def apply(itemId: String): SaveLogRQ = {
+          val saveLogRequest = new SaveLogRQ
+          saveLogRequest.setItemId(itemId)
+          saveLogRequest.setLevel("ERROR")
+          saveLogRequest.setLogTime(Calendar.getInstance.getTime)
+          saveLogRequest.setMessage(e.message)
+          saveLogRequest.setLogTime(Calendar.getInstance.getTime)
+          saveLogRequest
+        }
+      }
+
+      ReportPortal.emitLog(value);
     }
     catch {
       case ex: Exception => {
@@ -342,7 +360,7 @@ class ReporterServiceImp @Inject()(parameters: ListenerParameters, service: Batc
     }
   }
 
-  private def getValueOfMap(map: ConcurrentHashMap[String, String], key: String): Option[String] = {
+  private def getValueOfMap(map: ConcurrentHashMap[String, Maybe[String]], key: String): Option[Maybe[String]] = {
     map.containsKey(key) match {
       case true => Some(map.get(key))
       case _ => None
