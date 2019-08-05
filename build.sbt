@@ -15,20 +15,27 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq("com.google.inject" % "guice" % "3.0",
-  "org.scalatest" %% "scalatest" % "3.0.1",
+  "org.scalatest" %% "scalatest" % "3.0.8",
   "com.epam.reportportal" % "client-java" % "5.0.0-BETA-1",
   "com.epam.reportportal" % "commons-model" % "5.0.0-BETA-8",
+  "com.epam.reportportal" % "logger-java-logback" % "5.0.0-BETA-0",
+//  "org.apache.logging.log4j" % "log4j-api" % "2.8.1",
+//  "org.apache.logging.log4j" % "log4j-core" % "2.8.1",
+  "ch.qos.logback" % "logback-classic" % "1.2.3",
+  "ch.qos.logback" % "logback-core" % "1.2.3",
   "com.google.guava" % "guava" % "18.0"
 )
 
 releaseCrossBuild := true
-
-testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest)
-
-parallelExecution in Test := false
 
 resolvers += Resolver.jcenterRepo
 
 bintrayOrganization := Some("epam")
 
 bintrayRepository := "reportportal"
+
+testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-C", "com.epam.reportportal.scalatest.RPReporter", "-P1")
+
+parallelExecution in Test := false
+
+logBuffered in Test := false

@@ -20,7 +20,7 @@
 
 package com.epam.reportportal.scalatest.service
 
-import java.util.Calendar
+import java.util.{Calendar, Date}
 import java.util.concurrent.ConcurrentHashMap
 
 import com.epam.reportportal.listeners.ListenerParameters
@@ -31,11 +31,13 @@ import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ
 import com.google.common.base.{Supplier, Suppliers}
 import io.reactivex.Maybe
 import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
+import org.slf4j.{Logger, LoggerFactory}
 
 
 class ReporterServiceTest extends FunSuite with Matchers with BeforeAndAfter{
 
   private var reporterService: Supplier[ReporterServiceImp] = _
+  private val logger: Logger = LoggerFactory.getLogger("test")
 
   before {
     val propertiesLoader: PropertiesLoader = PropertiesLoader.load
@@ -66,6 +68,8 @@ class ReporterServiceTest extends FunSuite with Matchers with BeforeAndAfter{
   }
 
   test("Testing ReporterService is created ") {
+    logger.error("HELLO MESSAGE")
+    ReportPortal.emitLog("QWE", "ERROR", new Date());
     reporterService should not be (null)
   }
 }
