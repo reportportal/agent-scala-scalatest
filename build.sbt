@@ -16,9 +16,9 @@ resolvers ++= Seq(
 
 libraryDependencies ++= Seq("com.google.inject" % "guice" % "3.0",
   "org.scalatest" %% "scalatest" % "3.0.8",
-  "com.epam.reportportal" % "client-java" % "5.0.0-BETA-1",
-  "com.epam.reportportal" % "commons-model" % "5.0.0-BETA-8",
-  "com.epam.reportportal" % "logger-java-logback" % "5.0.0-BETA-0",
+  "com.epam.reportportal" % "client-java" % "5.0.0-BETA-4",
+  "com.epam.reportportal" % "commons-model" % "5.0.0-BETA-12",
+  "com.epam.reportportal" % "logger-java-logback" % "5.0.0-BETA-4",
 //  "org.apache.logging.log4j" % "log4j-api" % "2.8.1",
 //  "org.apache.logging.log4j" % "log4j-core" % "2.8.1",
   "ch.qos.logback" % "logback-classic" % "1.2.3",

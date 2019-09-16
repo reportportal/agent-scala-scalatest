@@ -325,7 +325,7 @@ class ReporterServiceImp(parameters: ListenerParameters, launch: Launch, testCon
       val value: rp.com.google.common.base.Function[String, SaveLogRQ] = new rp.com.google.common.base.Function[String, SaveLogRQ] {
         override def apply(itemId: String): SaveLogRQ = {
           val saveLogRequest = new SaveLogRQ
-          saveLogRequest.setItemId(itemId)
+          saveLogRequest.setItemUuid(itemId)
           saveLogRequest.setLevel("ERROR")
           saveLogRequest.setLogTime(Calendar.getInstance.getTime)
           saveLogRequest.setMessage(e.message)
