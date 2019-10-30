@@ -20,23 +20,56 @@
 
 package com.epam.reportportal.scalatest.service
 
-import com.epam.reportportal.guice.Injector
-import com.epam.reportportal.scalatest.providers.TestContextProvider
+import java.util.{Calendar, Date}
+import java.util.concurrent.ConcurrentHashMap
+
+import com.epam.reportportal.listeners.ListenerParameters
+import com.epam.reportportal.scalatest.domain.TestContext
+import com.epam.reportportal.service.{Launch, ReportPortal}
+import com.epam.reportportal.utils.properties.PropertiesLoader
+import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ
 import com.google.common.base.{Supplier, Suppliers}
+import io.reactivex.Maybe
 import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
+import org.slf4j.{Logger, LoggerFactory}
 
 
 class ReporterServiceTest extends FunSuite with Matchers with BeforeAndAfter{
 
   private var reporterService: Supplier[ReporterServiceImp] = _
+  private val logger: Logger = LoggerFactory.getLogger("test")
 
   before {
+    val propertiesLoader: PropertiesLoader = PropertiesLoader.load
+    val listenerParameters: ListenerParameters = new ListenerParameters(propertiesLoader)
+    val launch: Launch = Suppliers.memoize(new Supplier[Launch]() {
+      override def get: Launch = {
+        val reportPortal = ReportPortal.builder.build
+        val rq = new StartLaunchRQ {
+          setName(listenerParameters.getLaunchName)
+          setStartTime(Calendar.getInstance.getTime)
+          setAttributes(listenerParameters.getAttributes)
+          setMode(listenerParameters.getLaunchRunningMode)
+        }
+        rq.setStartTime(Calendar.getInstance.getTime)
+        val description = listenerParameters.getDescription
+        if (description != null) rq.setDescription(description)
+        reportPortal.newLaunch(rq)
+      }
+    }).get()
+
+    val testNGContext: TestContext = TestContext(
+      listenerParameters.getLaunchName,
+      Maybe.empty(), isLaunchFailed = false, new ConcurrentHashMap[String, Boolean],
+      new ConcurrentHashMap[String, Maybe[String]])
     reporterService = Suppliers.memoize(new Supplier[ReporterServiceImp] {
-      override def get() = Injector.getInstance.getChildInjector(new TestContextProvider).getBean(classOf[ReporterServiceImp])
+      override def get() = new ReporterServiceImp(listenerParameters, launch, testNGContext)
     })
   }
 
   test("Testing ReporterService is created ") {
+    logger.error("HELLO MESSAGE")
+    ReportPortal.emitLog("QWE", "ERROR", new Date());
     reporterService should not be (null)
   }
 }

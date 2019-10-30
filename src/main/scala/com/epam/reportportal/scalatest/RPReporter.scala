@@ -22,15 +22,19 @@
 package com.epam.reportportal.scalatest
 
 import java.io.InputStream
-import java.util.Properties
+import java.util.concurrent.ConcurrentHashMap
+import java.util.{Calendar, Properties}
 
+import com.epam.reportportal.listeners.ListenerParameters
+import com.epam.reportportal.scalatest.domain.TestContext
+import com.epam.reportportal.scalatest.service.ReporterServiceImp
+import com.epam.reportportal.service.{Launch, ReportPortal}
+import com.epam.reportportal.utils.properties.PropertiesLoader
+import com.epam.ta.reportportal.ws.model.launch.StartLaunchRQ
+import com.google.common.base.{Supplier, Suppliers}
+import io.reactivex.Maybe
 import org.scalatest.Reporter
 import org.scalatest.events._
-import com.google.common.base.Supplier
-import com.google.common.base.Suppliers
-import com.epam.reportportal.guice.Injector
-import com.epam.reportportal.scalatest.providers.TestContextProvider
-import com.epam.reportportal.scalatest.service.ReporterServiceImp
 import org.slf4j.LoggerFactory
 
 /**
@@ -49,8 +53,33 @@ class RPReporter extends Reporter {
     loadReportPortalProperties()
     isSuiteStarted = new ThreadLocal[Boolean]
     isSuiteStarted.set(false)
+
+    val propertiesLoader: PropertiesLoader = PropertiesLoader.load
+    val listenerParameters: ListenerParameters = new ListenerParameters(propertiesLoader)
+    val launch: Launch = Suppliers.memoize(new Supplier[Launch]() {
+      override def get: Launch = {
+        val reportPortal = ReportPortal.builder.build
+        val rq = new StartLaunchRQ {
+          setName(listenerParameters.getLaunchName)
+          setStartTime(Calendar.getInstance.getTime)
+          setAttributes(listenerParameters.getAttributes)
+          setMode(listenerParameters.getLaunchRunningMode)
+        }
+        rq.setStartTime(Calendar.getInstance.getTime)
+        val description = listenerParameters.getDescription
+        if (description != null) rq.setDescription(description)
+        reportPortal.newLaunch(rq)
+      }
+    }).get()
+
+    val testNGContext: TestContext = TestContext(
+      listenerParameters.getLaunchName,
+      Maybe.empty(), isLaunchFailed = false, new ConcurrentHashMap[String, Boolean],
+      new ConcurrentHashMap[String, Maybe[String]])
+
+
     reporterService = Suppliers.memoize(new Supplier[ReporterServiceImp] {
-      override def get() = Injector.getInstance.getChildInjector(new TestContextProvider).getBean(classOf[ReporterServiceImp])
+      override def get() = new ReporterServiceImp(listenerParameters, launch, testNGContext)
     })
   }
 

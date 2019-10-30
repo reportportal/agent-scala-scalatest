@@ -26,10 +26,10 @@ class RPReporterTest extends FunSuite with Matchers {
 
   test("Checking System properties are set by RPReporter") {
     val reporter = new RPReporter()
-    System.getProperty("rp.endpoint") shouldBe("http://192.168.0.105:8080")
+    System.getProperty("rp.endpoint") shouldBe("https://beta.demo.reportportal.io")
     System.getProperty("rp.uuid") shouldBe("aaaaaaaa-bbbb-cccc-dddd-000000000000")
     System.getProperty("rp.launch") shouldBe("superadmin_TEST_EXAMPLE")
-    System.getProperty("rp.project") shouldBe("default_project")
+    System.getProperty("rp.project") shouldBe("superadmin_personal")
     System.getProperty("rp.enable") shouldBe("true")
     System.getProperty("rp.tags") shouldBe("Unittests")
     reporter.init()

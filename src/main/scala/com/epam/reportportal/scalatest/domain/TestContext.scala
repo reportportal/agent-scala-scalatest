@@ -22,9 +22,11 @@ package com.epam.reportportal.scalatest.domain
 
 import java.util.concurrent.ConcurrentHashMap
 
+import io.reactivex.Maybe
+
 case class TestContext(var launchName: String,
-                       var launchID: String,
+                       var launchID: Maybe[String],
                        var isLaunchFailed: Boolean,
                        var suitPassed: ConcurrentHashMap[String, Boolean],
-                       var rootIdsOfSuites: ConcurrentHashMap[String, String]
+                       var rootIdsOfSuites: ConcurrentHashMap[String, Maybe[String]]
 )
