@@ -46,17 +46,17 @@ This Project is a Report Portal Agent for scalatest projects.
 * add your reportportal.properties file to test/resources
 * set reporter in your build tool:
   * _maven_ (Configuration options / reporters): 
-  `com.epam.reportportal.scalatest.RPReporter`
-  http://www.scalatest.org/user_guide/using_the_scalatest_maven_plugin
-  * _sbt_
-  
-   In your build.sbt
-  ```scala
-  testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-C", "com.epam.reportportal.scalatest.RPReporter")
-  ```
-  * _gradle:_ in your test task: 
-  ```groovy
-  args = ['-C', 'com.epam.reportportal.scalatest.RPReporter']
-  ```
+  >`com.epam.reportportal.scalatest.RPReporter`
+  > http://www.scalatest.org/user_guide/using_the_scalatest_maven_plugin
+  * _sbt:_ 
+  > in your build.sbt:
+  > ```
+  > testOptions in Test += Tests.Argument(TestFrameworks.ScalaTest, "-C", "com.epam.reportportal.scalatest.RPReporter")
+  > ```
+  * _gradle:_ 
+  >in your test task: 
+  >```
+  > args = ['-C', 'com.epam.reportportal.scalatest.RPReporter']
+  >```
   
 
