@@ -16,13 +16,13 @@ resolvers ++= Seq(
 )
 
 libraryDependencies ++= Seq("com.google.inject" % "guice" % "3.0",
-  "org.scalatest" %% "scalatest" % "3.0.8",
+  "com.google.guava" % "guava" % "22.0",
   "com.epam.reportportal" % "client-java" % "5.0.0-BETA-4",
   "com.epam.reportportal" % "commons-model" % "5.0.0-BETA-12",
-  "com.epam.reportportal" % "logger-java-logback" % "5.0.0-BETA-4",
-  "ch.qos.logback" % "logback-classic" % "1.2.3",
-  "ch.qos.logback" % "logback-core" % "1.2.3",
-  "com.google.guava" % "guava" % "22.0"
+  "com.epam.reportportal" % "logger-java-logback" % "5.0.0-BETA-4" % "test",
+  "org.scalatest" %% "scalatest" % "3.0.8" % "test",
+  "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
+  "ch.qos.logback" % "logback-core" % "1.2.3" % "test"
 )
 
 releaseCrossBuild := true
