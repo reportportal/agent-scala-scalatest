@@ -8,7 +8,7 @@ crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.10")
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
-licenses += "Apache License 2.0" -> url("https://opensource.org/licenses/Apache-2.0")
+licenses += "Apache-2.0" -> url("https://opensource.org/licenses/Apache-2.0")
 
 resolvers ++= Seq(
   Resolver.jcenterRepo,
