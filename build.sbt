@@ -15,7 +15,8 @@ resolvers ++= Seq(
   "EPAM bintray" at "https://dl.bintray.com/epam/reportportal"
 )
 
-libraryDependencies ++= Seq("com.google.inject" % "guice" % "3.0",
+libraryDependencies ++= Seq(
+  "com.google.inject" % "guice" % "3.0",
   "com.google.guava" % "guava" % "22.0",
   "com.epam.reportportal" % "client-java" % "5.0.0-BETA-4",
   "com.epam.reportportal" % "commons-model" % "5.0.0-BETA-12",
