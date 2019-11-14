@@ -314,8 +314,16 @@ class ReporterServiceImp(parameters: ListenerParameters, launch: Launch, testCon
     }
   }
 
-  def startConfiguration(e: DiscoveryStarting): Unit = {
+  def startConfiguration(e: DiscoveryStarting): Unit = {}
 
+  def sendRPMsgAndFinishTest(e: TestFailed): Unit = {
+    sendReportPortalMsg(e)
+    finishTestMethod(e)
+  }
+
+  def startAndFinishTest(e: TestIgnored): Unit = {
+    startTestMethod(e)
+    finishTestMethod(e)
   }
 
   def sendReportPortalMsg(e: TestFailed): Unit = {

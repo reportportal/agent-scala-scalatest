@@ -152,13 +152,11 @@ class RPReporter extends Reporter {
     }
 
     case e: TestFailed ⇒ {
-      reporterService.get().sendReportPortalMsg(e)
-      reporterService.get().finishTestMethod(e)
+      reporterService.get().sendRPMsgAndFinishTest(e)
     }
 
     case e: TestIgnored ⇒ {
-      reporterService.get().startTestMethod(e)
-      reporterService.get().finishTestMethod(e)
+      reporterService.get().startAndFinishTest(e)
     }
 
     case e: TestPending ⇒ {
