@@ -20,8 +20,8 @@
 
 package com.epam.reportportal.scalatest.service
 
-import java.util.{Calendar, Date}
 import java.util.concurrent.ConcurrentHashMap
+import java.util.{Calendar, Date}
 
 import com.epam.reportportal.listeners.ListenerParameters
 import com.epam.reportportal.scalatest.domain.TestContext
@@ -34,7 +34,7 @@ import org.scalatest.{BeforeAndAfter, FunSuite, Matchers}
 import org.slf4j.{Logger, LoggerFactory}
 
 
-class ReporterServiceTest extends FunSuite with Matchers with BeforeAndAfter{
+class ReporterServiceTest extends FunSuite with Matchers with BeforeAndAfter {
 
   private var reporterService: Supplier[ReporterServiceImp] = _
   private val logger: Logger = LoggerFactory.getLogger("test")
@@ -50,7 +50,10 @@ class ReporterServiceTest extends FunSuite with Matchers with BeforeAndAfter{
           setStartTime(Calendar.getInstance.getTime)
           setAttributes(listenerParameters.getAttributes)
           setMode(listenerParameters.getLaunchRunningMode)
+          setRerun(listenerParameters.isRerun)
         }
+        val rerunOf = listenerParameters.getRerunOf
+        if (null != rerunOf) rq.setRerunOf(rerunOf)
         rq.setStartTime(Calendar.getInstance.getTime)
         val description = listenerParameters.getDescription
         if (description != null) rq.setDescription(description)
