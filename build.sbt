@@ -12,14 +12,15 @@ licenses += "Apache-2.0" -> url("https://opensource.org/licenses/Apache-2.0")
 
 resolvers ++= Seq(
   Resolver.sbtPluginRepo("releases"),
+  "jitpack" at "https://jitpack.io",
   "EPAM bintray" at "https://dl.bintray.com/epam/reportportal"
 )
 
 libraryDependencies ++= Seq(
   "com.google.inject" % "guice" % "3.0",
   "com.google.guava" % "guava" % "22.0",
-  "com.epam.reportportal" % "client-java" % "5.0.0-BETA-8",
-  "com.epam.reportportal" % "commons-model" % "5.0.0",
+  "com.github.reportportal" % "client-java" % "dc4cb35",
+  "com.github.reportportal" % "commons-model" % "37e96a6",
   "org.scalatest" %% "scalatest" % "3.0.8",
   "com.epam.reportportal" % "logger-java-logback" % "5.0.0-BETA-8" % "test",
   "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",

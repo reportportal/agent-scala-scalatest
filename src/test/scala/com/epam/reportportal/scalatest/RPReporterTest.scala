@@ -32,6 +32,8 @@ class RPReporterTest extends FunSuite with Matchers {
     System.getProperty("rp.project") shouldBe("superadmin_personal")
     System.getProperty("rp.enable") shouldBe("true")
     System.getProperty("rp.tags") shouldBe("Unittests")
+    System.setProperty("rp.rerun", "true")
+    System.setProperty("rp.rerun.of", "launch-uuid")
     reporter.init()
     reporter.reporterService should not be(null)
   }
