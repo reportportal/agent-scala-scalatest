@@ -2,9 +2,9 @@ name := "agent-scala-scalatest"
 
 organization := "com.epam.reportportal"
 
-scalaVersion := "2.12.10"
+scalaVersion := "2.13.1"
 
-crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.10")
+crossScalaVersions := Seq("2.10.7", "2.11.12", "2.12.10", "2.13.1")
 
 javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 
@@ -19,10 +19,10 @@ resolvers ++= Seq(
 libraryDependencies ++= Seq(
   "com.google.inject" % "guice" % "3.0",
   "com.google.guava" % "guava" % "22.0",
-  "com.github.reportportal" % "client-java" % "dc4cb35",
-  "com.github.reportportal" % "commons-model" % "37e96a6",
+  "com.epam.reportportal" % "client-java" % "5.0.0-BETA-9",
+  "com.epam.reportportal" % "commons-model" % "5.0.0",
   "org.scalatest" %% "scalatest" % "3.0.8",
-  "com.epam.reportportal" % "logger-java-logback" % "5.0.0-BETA-8" % "test",
+  "com.epam.reportportal" % "logger-java-logback" % "5.0.0-BETA-9" % "test",
   "ch.qos.logback" % "logback-classic" % "1.2.3" % "test",
   "ch.qos.logback" % "logback-core" % "1.2.3" % "test"
 )
