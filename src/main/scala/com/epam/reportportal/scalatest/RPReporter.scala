@@ -38,8 +38,8 @@ import org.scalatest.events._
 import org.slf4j.LoggerFactory
 
 /**
-  * Own Reporter implementation to send test information to ReportPortal server.
-  */
+ * Own Reporter implementation to send test information to ReportPortal server.
+ */
 class RPReporter extends Reporter {
 
   private val reportPortalPropertiesFileName = "reportportal.properties"
@@ -64,7 +64,10 @@ class RPReporter extends Reporter {
           setStartTime(Calendar.getInstance.getTime)
           setAttributes(listenerParameters.getAttributes)
           setMode(listenerParameters.getLaunchRunningMode)
+          setRerun(listenerParameters.isRerun)
         }
+        val rerunOf = listenerParameters.getRerunOf
+        if (null != rerunOf) rq.setRerunOf(rerunOf)
         rq.setStartTime(Calendar.getInstance.getTime)
         val description = listenerParameters.getDescription
         if (description != null) rq.setDescription(description)
