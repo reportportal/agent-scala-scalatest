@@ -6,41 +6,26 @@ This Project is a Report Portal Agent for scalatest projects.
 ### To use the agent:
 * add this library to your project as dependency
   * SBT
-   >      resolvers ++= Seq(
-   >        "EPAM bintray" at "http://dl.bintray.com/epam/reportportal"
-   >      )
    >
-   >      libraryDependencies += "com.epam.reportportal" %% "agent-scala-scalatest" % "5.0.3" % "test"
+   >      libraryDependencies += "com.epam.reportportal" %% "agent-scala-scalatest" % "5.0.4" % "test"
    >
 
   * Maven
   
-   >      <repositories>
-   >           <repository>
-   >              <snapshots>
-   >                <enabled>false</enabled>
-   >              </snapshots>
-   >              <id>bintray-epam-reportportal</id>
-   >              <name>bintray</name>
-   >              <url>http://dl.bintray.com/epam/reportportal</url>
-   >           </repository>
-   >      </repositories>
    >      
    >      <dependency>
    >        <groupId>com.epam.reportportal</groupId>
    >        <artifactId>agent-scala-scalatest_2.12</artifactId>
-   >        <version>5.0.3</version>
+   >        <version>5.0.4</version>
    >        <scope>test</scope>
    >      </dependency>
 
    * Gradle
    >        repositories {
-   >            jcenter()
-   >            mavenLocal()
-   >            maven { url "http://dl.bintray.com/epam/reportportal" }
+   >            mavenCentral()
    >        }
    >
-   >      testCompile group: 'com.epam.reportportal', name: 'agent-scala-scalatest_2.12', version: '5.0.3'
+   >      testCompile group: 'com.epam.reportportal', name: 'agent-scala-scalatest_2.12', version: '5.0.4'
    >
 
 * add your reportportal.properties file to test/resources
