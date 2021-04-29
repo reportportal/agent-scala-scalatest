@@ -11,9 +11,7 @@ javacOptions ++= Seq("-source", "1.8", "-target", "1.8", "-Xlint")
 licenses += "Apache-2.0" -> url("https://opensource.org/licenses/Apache-2.0")
 
 resolvers ++= Seq(
-  Resolver.sbtPluginRepo("releases"),
-  "jitpack" at "https://jitpack.io",
-  "EPAM bintray" at "https://dl.bintray.com/epam/reportportal"
+  Resolver.sbtPluginRepo("releases")
 )
 
 libraryDependencies ++= Seq(
